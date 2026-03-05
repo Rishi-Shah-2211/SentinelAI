@@ -2,7 +2,6 @@ import { Request, Response } from "express"
 import prisma from "../lib/prisma"
 
 export const getOverview = async (req: Request, res: Response) => {
-
   try {
 
     const totalUsers = await (prisma as any).user.count()
@@ -25,59 +24,50 @@ export const getOverview = async (req: Request, res: Response) => {
     })
 
   } catch (error) {
-
-    console.error(error)
-
-    res.status(500).json({
-      error: "Failed to fetch overview"
-    })
-
+    res.status(500).json({ error: "Failed to fetch overview" })
   }
 }
 
 export const getAlerts = async (req: Request, res: Response) => {
-
   try {
 
     const alerts = await (prisma as any).alert.findMany({
-      orderBy: {
-        createdAt: "desc"
-      }
+      orderBy: { createdAt: "desc" }
     })
 
     res.json(alerts)
 
   } catch (error) {
-
-    console.error(error)
-
-    res.status(500).json({
-      error: "Failed to fetch alerts"
-    })
-
+    res.status(500).json({ error: "Failed to fetch alerts" })
   }
 }
 
 export const getHighRiskUsers = async (req: Request, res: Response) => {
-
   try {
 
     const users = await (prisma as any).riskHistory.findMany({
       take: 10,
-      orderBy: {
-        riskScore: "desc"
-      }
+      orderBy: { riskScore: "desc" }
     })
 
     res.json(users)
 
   } catch (error) {
+    res.status(500).json({ error: "Failed to fetch high risk users" })
+  }
+}
 
-    console.error(error)
+export const getRiskTrends = async (req: Request, res: Response) => {
+  try {
 
-    res.status(500).json({
-      error: "Failed to fetch high risk users"
+    const trends = await (prisma as any).riskHistory.findMany({
+      orderBy: { timestamp: "asc" },
+      take: 50
     })
 
+    res.json(trends)
+
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch risk trends" })
   }
 }
