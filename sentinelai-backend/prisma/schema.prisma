@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int          @id @default(autoincrement())
+  userId      String       @unique
+  department  String?
+  role        String?
+  createdAt   DateTime     @default(now())
+
+  activities  Activity[]
+  alerts      Alert[]
+  risks       RiskHistory[]
+}
+
+model Activity {
+  id         Int      @id @default(autoincrement())
+  userId     String
+  action     String
+  timestamp  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [userId])
+}
+
+model Alert {
+  id         Int       @id @default(autoincrement())
+  userId     String
+  riskScore  Float
+  status     String    @default("OPEN")
+
+  createdAt  DateTime  @default(now())
+  resolvedAt DateTime?
+
+  user       User      @relation(fields: [userId], references: [userId])
+}
+
+model RiskHistory {
+  id         Int      @id @default(autoincrement())
+  userId     String
+  riskScore  Float
+  timestamp  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [userId])
+}
