@@ -1,25 +1,107 @@
 import { Request, Response } from "express"
 import prisma from "../lib/prisma"
 
-export const createActivity = async (req: Request, res: Response) => {
+export const getOverview = async (req: Request, res: Response) => {
+
   try {
 
-    const userId = req.body.userId as string
-    const action = req.body.action as string
+    const totalUsers = await (prisma as any).user.count()
+    const totalActivities = await (prisma as any).activity.count()
+    const totalAlerts = await (prisma as any).alert.count()
 
-    const activity = await (prisma as any).activity.create({
-      data: {
-        userId,
-        action
+    const avgRiskResult = await (prisma as any).riskHistory.aggregate({
+      _avg: {
+        riskScore: true
       }
     })
 
-    res.json(activity)
+    const avgRisk = avgRiskResult._avg?.riskScore || 0
+
+    res.json({
+      totalUsers,
+      totalActivities,
+      totalAlerts,
+      avgRisk
+    })
 
   } catch (error) {
+
     console.error(error)
+
     res.status(500).json({
-      error: "Failed to create activity"
+      error: "Failed to fetch overview"
     })
+
+  }
+}
+
+export const getAlerts = async (req: Request, res: Response) => {
+
+  try {
+
+    const alerts = await (prisma as any).alert.findMany({
+      orderBy: {
+        createdAt: "desc"
+      }
+    })
+
+    res.json(alerts)
+
+  } catch (error) {
+
+    console.error(error)
+
+    res.status(500).json({
+      error: "Failed to fetch alerts"
+    })
+
+  }
+}
+
+export const getHighRiskUsers = async (req: Request, res: Response) => {
+
+  try {
+
+    const users = await (prisma as any).riskHistory.findMany({
+      take: 10,
+      orderBy: {
+        riskScore: "desc"
+      }
+    })
+
+    res.json(users)
+
+  } catch (error) {
+
+    console.error(error)
+
+    res.status(500).json({
+      error: "Failed to fetch high risk users"
+    })
+
+  }
+}
+
+export const getRiskTrends = async (req: Request, res: Response) => {
+
+  try {
+
+    const trends = await (prisma as any).riskHistory.findMany({
+      orderBy: {
+        timestamp: "asc"
+      },
+      take: 50
+    })
+
+    res.json(trends)
+
+  } catch (error) {
+
+    console.error(error)
+
+    res.status(500).json({
+      error: "Failed to fetch risk trends"
+    })
+
   }
 }
