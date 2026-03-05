@@ -1,28 +1,25 @@
-import { Request, Response } from "express";
-import prisma from "../lib/prisma";
+import { Request, Response } from "express"
+import prisma from "../lib/prisma"
 
-export const ingestActivity = async (req: Request, res: Response) => {
+export const createActivity = async (req: Request, res: Response) => {
   try {
-    const { userId, action, metadata } = req.body;
 
-    const activity = await prisma.activity.create({
+    const userId = req.body.userId as string
+    const action = req.body.action as string
+
+    const activity = await (prisma as any).activity.create({
       data: {
         userId,
-        action,
-        metadata,
-        riskScore: 0
+        action
       }
-    });
+    })
 
-    res.json({
-      message: "Activity ingested successfully",
-      activity
-    });
+    res.json(activity)
 
   } catch (error) {
-    console.error("Activity ingestion error:", error);
+    console.error(error)
     res.status(500).json({
-      error: "Failed to ingest activity"
-    });
+      error: "Failed to create activity"
+    })
   }
-};
+}
