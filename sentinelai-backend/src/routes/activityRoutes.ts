@@ -1,16 +1,28 @@
-import express from "express";
-import {
-  getOverview,
-  getAlerts,
-  getHighRiskUsers,
-  getRiskTrends
-} from "../controllers/analyticsController";
+import { Router } from "express"
+import prisma from "../lib/prisma"
 
-const router = express.Router();
+const router = Router()
 
-router.get("/overview", getOverview);
-router.get("/alerts", getAlerts);
-router.get("/users/high-risk", getHighRiskUsers);
-router.get("/risk-trends", getRiskTrends);
+router.post("/", async (req, res) => {
+  try {
+    const { userId, action, device, location } = req.body
 
-export default router;
+    const activity = await prisma.activity.create({
+      data: {
+        userId,
+        action,
+        device,
+        location,
+        riskScore: Math.random(),
+        timestamp: new Date()
+      }
+    })
+
+    res.json(activity)
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: "Failed to create activity" })
+  }
+})
+
+export default router

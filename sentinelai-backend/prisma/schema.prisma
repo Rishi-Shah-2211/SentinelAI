@@ -7,44 +7,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id          Int          @id @default(autoincrement())
-  userId      String       @unique
-  department  String?
-  role        String?
-  createdAt   DateTime     @default(now())
+model Activity {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  device    String?
+  location  String?
+  riskScore Float
+  timestamp DateTime @default(now())
 
-  activities  Activity[]
-  alerts      Alert[]
-  risks       RiskHistory[]
+  @@index([userId])
+  @@index([timestamp])
 }
 
-model Activity {
-  id         Int      @id @default(autoincrement())
-  userId     String
-  action     String
-  timestamp  DateTime @default(now())
+model UserRisk {
+  id        String   @id @default(cuid())
+  userId    String
+  riskScore Float
+  createdAt DateTime @default(now())
 
-  user       User     @relation(fields: [userId], references: [userId])
+  @@index([userId])
 }
 
 model Alert {
-  id         Int       @id @default(autoincrement())
-  userId     String
-  riskScore  Float
-  status     String    @default("OPEN")
+  id        String   @id @default(cuid())
+  userId    String
+  riskScore Float
+  message   String
+  createdAt DateTime @default(now())
 
-  createdAt  DateTime  @default(now())
-  resolvedAt DateTime?
-
-  user       User      @relation(fields: [userId], references: [userId])
-}
-
-model RiskHistory {
-  id         Int      @id @default(autoincrement())
-  userId     String
-  riskScore  Float
-  timestamp  DateTime @default(now())
-
-  user       User     @relation(fields: [userId], references: [userId])
+  @@index([userId])
 }
