@@ -5,23 +5,31 @@ const router = Router()
 
 router.post("/", async (req, res) => {
   try {
-    const { userId, action, device, location } = req.body
+    const { userId, action } = req.body
+
+    if (!userId || !action) {
+      return res.status(400).json({
+        error: "userId and action are required"
+      })
+    }
 
     const activity = await prisma.activity.create({
       data: {
         userId,
         action,
-        device,
-        location,
         riskScore: Math.random(),
         timestamp: new Date()
       }
     })
 
     res.json(activity)
+
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: "Failed to create activity" })
+    console.error("Activity creation failed:", error)
+
+    res.status(500).json({
+      error: "Failed to create activity"
+    })
   }
 })
 
