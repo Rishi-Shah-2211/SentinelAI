@@ -17,8 +17,7 @@ router.post("/", async (req, res) => {
       data: {
         userId,
         action,
-        riskScore: Math.random(),
-        timestamp: new Date()
+        riskScore: Math.random()
       }
     })
 
