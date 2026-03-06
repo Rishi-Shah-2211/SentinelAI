@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import threatsRouter from "./routes/threats";
 
 import activityRoutes from "./routes/activityRoutes";
 import analyticsRoutes from "./routes/analyticsRoutes";
@@ -22,6 +23,7 @@ app.get("/api/test", (req, res) => {
 // Routes
 app.use("/api/activity", activityRoutes);
 app.use("/api/analytics", analyticsRoutes);
+app.use("/api/threats", threatsRouter);
 
 const PORT = process.env.PORT || 5000;
 

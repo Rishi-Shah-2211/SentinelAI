@@ -1,44 +1,36 @@
-import fetch from "node-fetch"
+import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/activity"
+const API_URL = "https://sentinelai-backend-uzvh.onrender.com/api/activity";
 
-const users = ["EMP001", "EMP002", "EMP003", "EMP004"]
+const users = ["EMP001", "EMP002", "EMP003", "EMP004"];
 
 const actions = [
   "login",
   "logout",
-  "file_download",
   "file_upload",
-  "usb_insert",
-  "password_change"
-]
+  "file_download",
+  "email_send",
+  "database_query"
+];
 
-console.log("Starting SentinelAI activity simulation...")
+function randomItem(arr: string[]) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
 
 async function sendActivity() {
+  const event = {
+    userId: randomItem(users),
+    action: randomItem(actions),
+    timestamp: new Date().toISOString()
+  };
+
   try {
-    const userId = users[Math.floor(Math.random() * users.length)]
-    const action = actions[Math.floor(Math.random() * actions.length)]
+    await axios.post(API_URL, event);
 
-    const activity = { userId, action }
-
-    console.log("Activity sent →", activity)
-
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(activity)
-    })
-
-    const text = await response.text()
-
-    console.log("Server response →", text)
-    console.log("-----------------------------------")
-  } catch (error) {
-    console.error("Simulation error:", error)
+    console.log("Activity sent →", event);
+  } catch (error: any) {
+    console.error("Error sending activity:", error.message);
   }
 }
 
-setInterval(sendActivity, 5000)
+setInterval(sendActivity, 5000);
