@@ -15,8 +15,8 @@ router.post("/", async (req, res) => {
 
     const activity = await prisma.activity.create({
       data: {
-        userId,
-        action,
+        userId: userId,
+        action: action,
         riskScore: Math.random()
       }
     })

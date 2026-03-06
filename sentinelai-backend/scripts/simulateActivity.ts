@@ -1,45 +1,30 @@
 import fetch from "node-fetch"
 
-const API_URL =
-  "https://sentinelai-backend-uzvh.onrender.com/api/activity"
+const API_URL = "http://localhost:5000/api/activity"
 
-const users = [
-  "EMP001",
-  "EMP002",
-  "EMP003",
-  "EMP004",
-  "EMP005",
-  "EMP006",
-  "EMP007",
-  "EMP008",
-  "EMP009",
-  "EMP010"
-]
+const users = ["EMP001", "EMP002", "EMP003", "EMP004"]
 
 const actions = [
   "login",
-  "file_access",
-  "file_download",
-  "usb_insert",
   "logout",
-  "privilege_escalation",
-  "data_exfiltration"
+  "file_download",
+  "file_upload",
+  "usb_insert",
+  "password_change"
 ]
 
-function randomItem(arr: string[]) {
-  return arr[Math.floor(Math.random() * arr.length)]
-}
+console.log("Starting SentinelAI activity simulation...")
 
 async function sendActivity() {
-  const activity = {
-    userId: randomItem(users),
-    action: randomItem(actions),
-    device: "corporate-laptop",
-    location: "office-network"
-  }
-
   try {
-    const res = await fetch(API_URL, {
+    const userId = users[Math.floor(Math.random() * users.length)]
+    const action = actions[Math.floor(Math.random() * actions.length)]
+
+    const activity = { userId, action }
+
+    console.log("Activity sent →", activity)
+
+    const response = await fetch(API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -47,20 +32,13 @@ async function sendActivity() {
       body: JSON.stringify(activity)
     })
 
-    const text = await res.text()
+    const text = await response.text()
 
-    try {
-      const json = JSON.parse(text)
-      console.log("Activity sent:", json)
-    } catch {
-      console.log("Server returned non-JSON response:")
-      console.log(text)
-    }
-  } catch (err) {
-    console.error("Simulation error:", err)
+    console.log("Server response →", text)
+    console.log("-----------------------------------")
+  } catch (error) {
+    console.error("Simulation error:", error)
   }
 }
 
-console.log("Starting SentinelAI activity simulation...")
-
-setInterval(sendActivity, 1500)
+setInterval(sendActivity, 5000)
