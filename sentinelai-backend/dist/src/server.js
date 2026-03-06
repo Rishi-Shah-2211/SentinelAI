@@ -9,6 +9,9 @@ const activityRoutes_1 = __importDefault(require("./routes/activityRoutes"));
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
+app.get("/api/test", (req, res) => {
+    res.json({ message: "SentinelAI backend is running" });
+});
 // Activity API
 app.use("/api/activity", activityRoutes_1.default);
 // Health check
