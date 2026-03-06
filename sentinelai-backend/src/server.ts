@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import dashboardRoutes from "./routes/dashboard";
 
 import activityRoutes from "./routes/activityRoutes";
 import analyticsRoutes from "./routes/analyticsRoutes";
@@ -39,6 +40,7 @@ app.get("/api/test", (req, res) => {
 app.use("/api/activity", activityRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/threats", threatsRouter);
+app.use("/api/dashboard", dashboardRoutes);
 
 /* =========================
    Server Start
