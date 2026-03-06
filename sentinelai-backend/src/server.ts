@@ -1,24 +1,27 @@
 import express from "express";
 import cors from "cors";
+
 import activityRoutes from "./routes/activityRoutes";
+import analyticsRoutes from "./routes/analyticsRoutes";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-// Root health route
+// Root route
 app.get("/", (req, res) => {
-  res.json({ status: "SentinelAI backend running" });
+  res.json({ message: "SentinelAI backend running" });
 });
 
-// Test API route
+// Test route
 app.get("/api/test", (req, res) => {
-  res.json({ message: "Activity endpoint reached" });
+  res.json({ message: "API working" });
 });
 
-// Activity routes
+// Routes
 app.use("/api/activity", activityRoutes);
+app.use("/api/analytics", analyticsRoutes);
 
 const PORT = process.env.PORT || 5000;
 
